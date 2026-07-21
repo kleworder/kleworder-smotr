@@ -548,9 +548,12 @@
     }
 
     .user-rating .star:hover,
-    .user-rating .star.active { color: #fbbf24; }
+    .user-rating .star.active { color: #fbbf24 !important; }
 
     .user-rating .star:hover { transform: scale(1.2); }
+
+    #detailStars .star { color: var(--text-muted); transition: color 0.15s ease; }
+    #detailStars .star.active { color: #fbbf24 !important; text-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
 
     /* Card Actions */
     .card-actions {
@@ -683,6 +686,7 @@
 
     .modal-body {
       padding: 1.5rem;
+      overflow-x: hidden;
     }
 
     .form-group {
@@ -763,7 +767,9 @@
       gap: 0.75rem;
       max-height: 400px;
       overflow-y: auto;
+      overflow-x: hidden;
       padding-right: 0.5rem;
+      width: 100%;
     }
 
     .search-result-item {
@@ -775,6 +781,8 @@
       background: var(--glass);
       cursor: pointer;
       transition: var(--transition);
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .search-result-item:hover {
