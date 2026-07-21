@@ -497,7 +497,11 @@ const app = {
   setDetailRating(rating) {
     this.detailRating = rating;
     const stars = document.querySelectorAll('#detailStars .star');
-    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+    stars.forEach((s, i) => {
+      s.classList.toggle('active', i < rating);
+      // Force color update
+      s.style.color = i < rating ? '#fbbf24' : '';
+    });
     // Visual feedback
     this.showToast(`Оценка: ${rating}/10`, 'success');
   },
@@ -505,14 +509,20 @@ const app = {
   hoverDetailRating(el, rating) {
     const container = el.parentElement;
     const stars = container.querySelectorAll('.star');
-    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+    stars.forEach((s, i) => {
+      s.classList.toggle('active', i < rating);
+      s.style.color = i < rating ? '#fbbf24' : '';
+    });
   },
 
   resetDetailRating(el) {
     const container = el.parentElement;
     const stars = container.querySelectorAll('.star');
     const rating = this.detailRating || 0;
-    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+    stars.forEach((s, i) => {
+      s.classList.toggle('active', i < rating);
+      s.style.color = i < rating ? '#fbbf24' : '';
+    });
   },
 
   async toggleDetailFavorite() {
