@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const https = require('https');
 
 const OMDB_API_KEY = process.env.OMDB_API_KEY;
-const POISKKINO_API_KEY = process.env.POISKKINO_API_KEY || 'ZQQ8GMN-TN54SGK-NB3MKEC-ZKB8V06';
+const POISKKINO_API_KEY = process.env.POISKKINO_API_KEY;
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,7 +14,7 @@ const corsHeaders = {
 
 const shikimoriClient = axios.create({
   httpsAgent: new https.Agent({ rejectUnauthorized: false, keepAlive: true }),
-  timeout: 15000,
+  timeout: 150000,
   headers: {
     'User-Agent': 'MyMediaLibraryApp/1.0',
     'Accept': 'application/json',
@@ -24,7 +24,7 @@ const shikimoriClient = axios.create({
 
 const poiskkinoClient = axios.create({
   baseURL: 'https://api.poiskkino.dev',
-  timeout: 15000,
+  timeout: 150000,
   headers: {
     'X-API-KEY': POISKKINO_API_KEY,
     'accept': 'application/json'
