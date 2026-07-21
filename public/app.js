@@ -421,6 +421,7 @@ const app = {
     const item = this.media.find(m => m.id === id);
     if (!item) return;
     this.currentDetailId = id;
+    this.detailRating = item.user_rating || 0;
 
     const body = document.getElementById('detailBody');
     const status = item.watch_status || 'planned';
@@ -430,7 +431,7 @@ const app = {
 
     const stars = Array.from({length: 10}, (_, i) => {
       const filled = i < userRating;
-      return `<span class="star ${filled ? 'active' : ''}" onclick="app.setDetailRating(${i + 1})" style="cursor:pointer;font-size:1.5rem;">★</span>`;
+      return `<span class="star ${filled ? 'active' : ''}" onclick="app.setDetailRating(${i + 1})" onmouseover="app.hoverDetailRating(this, ${i + 1})" onmouseout="app.resetDetailRating(this)" style="cursor:pointer;font-size:1.5rem;">★</span>`;
     }).join('');
 
     body.innerHTML = `
@@ -494,9 +495,24 @@ const app = {
   },
 
   setDetailRating(rating) {
+    this.detailRating = rating;
     const stars = document.querySelectorAll('#detailStars .star');
     stars.forEach((s, i) => s.classList.toggle('active', i < rating));
-    this.detailRating = rating;
+    // Visual feedback
+    this.showToast(`Оценка: ${rating}/10`, 'success');
+  },
+
+  hoverDetailRating(el, rating) {
+    const container = el.parentElement;
+    const stars = container.querySelectorAll('.star');
+    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
+  },
+
+  resetDetailRating(el) {
+    const container = el.parentElement;
+    const stars = container.querySelectorAll('.star');
+    const rating = this.detailRating || 0;
+    stars.forEach((s, i) => s.classList.toggle('active', i < rating));
   },
 
   async toggleDetailFavorite() {
@@ -521,7 +537,7 @@ const app = {
 
     const status = document.getElementById('detailStatus').value;
     const notes = document.getElementById('detailNotes').value;
-    const rating = this.detailRating || this.media.find(m => m.id === this.currentDetailId)?.user_rating || 0;
+    const rating = this.detailRating !== undefined ? this.detailRating : (this.media.find(m => m.id === this.currentDetailId)?.user_rating || 0);
 
     try {
       const res = await fetch(`${API}/media/${this.currentDetailId}`, {
