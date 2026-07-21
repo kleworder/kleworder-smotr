@@ -102,10 +102,10 @@ const app = {
     const typeLabel = this.typeLabels[item.type] || item.type;
     const typeIcon = this.typeIcons[item.type] || 'fa-film';
 
-    const stars = Array.from({length: 10}, (_, i) => {
-      const filled = i < userRating;
-      return `<span class="star ${filled ? 'active' : ''}" onclick="app.setRating(${item.id}, ${i + 1}, event)" onmouseover="app.hoverRating(this, ${i + 1})" onmouseout="app.resetRating(this, ${userRating})">★</span>`;
-    }).join('');
+    // Show user rating as text if set, otherwise show public rating
+    const ratingDisplay = userRating > 0 
+      ? `<span style="color:var(--warning)"><i class="fas fa-star" style="font-size:0.75rem;"></i> ${userRating}/10</span>`
+      : `<span style="color:var(--text-muted)">—</span>`;
 
     return `
       <div class="media-card" data-id="${item.id}">
@@ -133,8 +133,8 @@ const app = {
               <i class="fas fa-star"></i>
               <span>${item.rating || '—'}</span>
             </div>
-            <div class="user-rating" onmouseleave="app.resetAllRatings(${item.id}, ${userRating})">
-              ${stars}
+            <div class="user-rating-text" style="font-size:0.85rem;color:var(--text-secondary);">
+              ${ratingDisplay}
             </div>
           </div>
         </div>
@@ -280,10 +280,25 @@ const app = {
         : `${API}/search/kinopoisk?q=${encodeURIComponent(query)}`;
 
       const res = await fetch(endpoint);
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        const text = await res.text();
+        console.error('Non-JSON response:', text.substring(0, 200));
+        resultsEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;">
+          <i class="fas fa-exclamation-triangle" style="font-size:2rem;margin-bottom:0.5rem;display:block;"></i>
+          Сервер вернул ошибку (${res.status}). Попробуйте позже.
+        </div>`;
+        return;
+      }
 
       if (!res.ok) {
-        resultsEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;">${data.error || 'Ошибка поиска'}</div>`;
+        const hint = data.hint ? `<br><small style="color:var(--text-muted)">${data.hint}</small>` : '';
+        resultsEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;">
+          <i class="fas fa-search" style="font-size:2rem;margin-bottom:0.5rem;display:block;opacity:0.5;"></i>
+          ${data.error || 'Ошибка поиска'}${hint}
+        </div>`;
         return;
       }
 
@@ -305,7 +320,10 @@ const app = {
         </div>
       `).join('');
     } catch (e) {
-      resultsEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:2rem;">Ошибка поиска</div>';
+      resultsEl.innerHTML = `<div style="text-align:center;color:var(--text-muted);padding:2rem;">
+        <i class="fas fa-wifi" style="font-size:2rem;margin-bottom:0.5rem;display:block;opacity:0.5;"></i>
+        Ошибка сети. Проверьте подключение.
+      </div>`;
       console.error(e);
     }
   },
