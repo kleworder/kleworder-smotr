@@ -570,6 +570,10 @@
       align-items: center;
       justify-content: center;
       gap: 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
     }
 
     .card-action-btn:hover {
@@ -962,6 +966,10 @@
       .btn { padding: 0.5rem 0.875rem; font-size: 0.8rem; }
       .btn-sm { padding: 0.35rem 0.6rem; font-size: 0.75rem; }
       .filter-chip { padding: 0.4rem 0.75rem; font-size: 0.8rem; }
+      .card-action-btn { padding: 0.5rem; font-size: 0; gap: 0; }
+      .card-action-btn i { font-size: 0.85rem; }
+      .card-action-btn::after { display: none; }
+      .card-actions { gap: 0.35rem; padding: 0 0.75rem 0.75rem; }
     }
 
     /* Detail modal */
